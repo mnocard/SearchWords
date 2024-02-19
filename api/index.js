@@ -7,15 +7,15 @@ import authRoute from './routes/auth.route.js';
 dotenv.config();
 
 mongoose.connect(process.env.MONGO)
-    .then(() => console.log('Connected.'))
-    .catch((err) => console.log(err));
+    .then(() => console.log('Connected to mongodb.'))
+    .catch((err) => console.log("Connection error. Check VPN." + err));
 
 const app = express();
 // next line allows to receive json from api 
 app.use(express.json());
 
 app.listen(3000, () => {
-    console.log("port 3000!");
+    console.log("Server started on port 3000. Url: http://localhost:3000!");
 });
 
 app.use("/api/user", userRoute);
