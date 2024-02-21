@@ -3,22 +3,23 @@ import bcrypt from 'bcryptjs';
 import { errorHandler } from "../utils/error.js";
 import jwt from 'jsonwebtoken';
 
-export const signup = (req, res, next) => {
+export const signup = async (req, res, next) => {
     const { username, email, password } = req.body;
     const passwordHash = bcrypt.hashSync(password, 10);
 
-    User.create({ username, email, password: passwordHash }).then((status) => {
-        console.log(status);
+    try {
+        await User.create({ username, email, password: passwordHash });
         res.status(201).json({ "message": "User created!" });
-    }).catch((err) => {
-        console.log(err.message);
-        next(err);
-    });
+    } catch (error) {
+        console.log(error.message);
+        next(error);
+    }
 };
 
-export const signin = (req, res, next) => {
+export const signin = async (req, res, next) => {
     const { email, password } = req.body;
-    User.findOne({ email }).then(user => {
+    try {
+        const user = await User.findOne({ email });
         const authError = errorHandler(404, 'User not found');
 
         if (!user) return next(authError);
@@ -29,7 +30,7 @@ export const signin = (req, res, next) => {
         const { password: hashedPassword, ...userDTO } = user._doc;
 
         res.cookie('access_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }).status(200).json(userDTO);
-    }).catch(error => {
+    } catch (error) {
         next(error);
-    });
+    }
 };

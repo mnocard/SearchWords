@@ -14,32 +14,31 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setError(false);
-    setLoading(true);
+    try {
+      setError(false);
+      setLoading(true);
 
-    await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    }).then(response => {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
       if (!response.ok) {
         throw new Error(`Not ok! Status: ${response.status}`);
       }
 
       const data = response.json();
-      console.log(data);
-
       setError(false);
-
       return data;
-    }).catch(error => {
+    } catch (error) {
       console.log(error);
       setError(true);
-    }).finally(() => {
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
   return (

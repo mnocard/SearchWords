@@ -12,16 +12,18 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setError(false);
-    setLoading(true);
+    try {
+      setError(false);
+      setLoading(true);
 
-    await fetch('/api/auth/signin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    }).then(response => {
+      const response = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
       if (!response.ok) {
         throw new Error(`Not ok! Status: ${response.status}`);
       }
@@ -30,17 +32,17 @@ export default function SignIn() {
       setError(false);
 
       return data;
-    }).catch(error => {
+    } catch (error) {
       console.log(error);
       setError(true);
-    }).finally(() => {
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
   return (
     <div className='p-3 max-w-lg mx-auto'>
-      <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
+      <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4 '>
         <input type='text' placeholder='Email' id='email' className='bg-slate-100 p-3 rounded-lg' onChange={handleChanges} />
         <input type='password' placeholder='Password' id='password' className='bg-slate-100 p-3 rounded-lg' onChange={handleChanges} />

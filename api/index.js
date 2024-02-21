@@ -5,10 +5,12 @@ import userRoute from './routes/user.route.js';
 import authRoute from './routes/auth.route.js';
 
 dotenv.config();
-
-mongoose.connect(process.env.MONGO)
-    .then(() => console.log('Connected to mongodb.'))
-    .catch((err) => console.log("Connection error. Check VPN." + err));
+try {
+    await mongoose.connect(process.env.MONGO);
+    console.log('Connected to mongodb.');
+} catch (error) {
+    console.log("Connection error. Check VPN." + err);
+}
 
 const app = express();
 // next line allows to receive json from api 
