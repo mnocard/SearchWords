@@ -16,11 +16,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-    },
-    salt: {
-        type: String,
-        required: true,
-    },
+    }
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
