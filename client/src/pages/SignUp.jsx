@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
 
   const handleChanges = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -18,7 +18,7 @@ export default function SignUp() {
       setError(false);
       setLoading(true);
 
-      const response = await fetch('/api/auth/signup', {
+      const response = await fetch('/api/auth/SignUp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -27,12 +27,11 @@ export default function SignUp() {
       });
 
       if (!response.ok) {
-        throw new Error(`Not ok! Status: ${response.status}`);
+        throw new Error(`Something went wrong! Status: ${response.status}`);
       }
 
-      const data = response.json();
       setError(false);
-      return data;
+      navigate('/');
     } catch (error) {
       console.log(error);
       setError(true);
@@ -53,7 +52,7 @@ export default function SignUp() {
       <div className="flex gap-2 mt-5 self-center justify-center">
         <p>Have an account?</p>
         <span className='text-blue-500'>
-          <Link to='/signin'>Sign In</Link>
+          <Link to='/SignIn'>Sign In</Link>
         </span>
       </div>
       <p className='text-red-600 mt-5 mx-auto text-center'>{error && "Something went wrong"}</p>

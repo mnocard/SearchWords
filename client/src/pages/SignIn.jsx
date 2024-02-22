@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChanges = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -16,7 +18,7 @@ export default function SignIn() {
       setError(false);
       setLoading(true);
 
-      const response = await fetch('/api/auth/signin', {
+      const response = await fetch('/api/auth/SignIn', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -24,17 +26,17 @@ export default function SignIn() {
         body: JSON.stringify(formData)
       });
 
-      if (!response.ok) {
-        throw new Error(`Not ok! Status: ${response.status}`);
+      if (response.status === 404) {
+        throw new Error("Incorrect login or password");
+      } else if (!response.ok) {
+        throw new Error("Something went wrong");
       }
 
-      const data = response.json();
       setError(false);
-
-      return data;
+      navigate('/');
     } catch (error) {
       console.log(error);
-      setError(true);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -48,7 +50,13 @@ export default function SignIn() {
         <input type='password' placeholder='Password' id='password' className='bg-slate-100 p-3 rounded-lg' onChange={handleChanges} />
         <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-md uppercase  disabled:opacity-80'>{loading ? "Loading..." : "Sign In"}</button>
       </form>
-      <p className='text-red-600 mt-5 mx-auto text-center'>{error && "Incorrect login or password"}</p>
+      <div className="flex gap-2 mt-5 self-center justify-center">
+        <p>Don&#39;t have an account?</p>
+        <span className='text-blue-500'>
+          <Link to='/SignUp'>Sign Up</Link>
+        </span>
+      </div>
+      <p className='text-red-600 mt-5 mx-auto text-center'>{error}</p>
     </div>
   );
 }
