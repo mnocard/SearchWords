@@ -8,7 +8,7 @@ dotenv.config();
 try {
     await mongoose.connect(process.env.MONGO);
     console.log('Connected to mongodb.');
-} catch (error) {
+} catch (err) {
     console.log("Connection error. Check VPN." + err);
 }
 
