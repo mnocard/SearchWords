@@ -32,6 +32,31 @@ export const signIn = async (req, res, next) => {
     }
 };
 
+export const google = async (req, res, next) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+        if (user) {
+            GetToken(res, user).status(200);
+        } else {
+            const generatedPassword = Math.random().toString(36).slice(-8);
+            const passwordHash = bcrypt.hashSync(generatedPassword, 10);
+            const username = req.body.username.split(' ').join('').toLowerCase() + Math.floor(Math.random() * 1000).toString();
+
+            console.log(req.body);
+
+            const newUser = await User.create({
+                username: username,
+                email: req.body.email,
+                password: passwordHash,
+                profilePicture: req.body.photoURL
+            });
+            GetToken(res, newUser).status(201);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 function GetToken(response, user) {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     const { password: hashedPassword, ...userDTO } = user._doc;
