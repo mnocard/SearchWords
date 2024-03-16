@@ -10,7 +10,7 @@ try {
     await mongoose.connect(process.env.MONGO);
     console.log('Connected to mongodb.');
 } catch (err) {
-    console.log("Connection error. Check VPN." + err);
+    console.log("Connection error. Check VPN. " + err);
 }
 
 const app = express();
