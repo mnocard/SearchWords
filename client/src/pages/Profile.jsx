@@ -2,7 +2,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from "../firebase";
-import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice.js';
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+  deleteUserStart,
+  deleteUserFailure,
+  deleteUserSuccess
+} from '../redux/user/userSlice.js';
 
 export default function Profile() {
   const dispatch = useDispatch();
@@ -37,13 +44,11 @@ export default function Profile() {
     uploadTask.on('state_changed', (snapshot) => {
       const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
       setImagePercent(Math.round(progress));
-    }, (error) => {
+    }, () => {
       setImageError(true);
     }, () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        console.log(1);
         setFormData({ ...formData, profilePicture: downloadURL });
-        console.log(2);
       });
     });
   };
@@ -56,7 +61,6 @@ export default function Profile() {
     event.preventDefault();
     try {
       dispatch(updateUserStart());
-      console.log(currentUser);
       const res = await fetch(`api/user/update/${currentUser._id}`, {
         method: 'POST',
         headers: {
@@ -74,6 +78,25 @@ export default function Profile() {
       }
     } catch (error) {
       dispatch(updateUserFailure(error));
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`api/user/delete/${currentUser._id}`, {
+        method: 'DELETE'
+      });
+
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data));
+      } else {
+        dispatch(deleteUserSuccess(data));
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(deleteUserFailure(error));
     }
   };
 
@@ -126,7 +149,7 @@ export default function Profile() {
           {loading ? "Loading..." : "Update"}
         </button>
         <div className="flex justify-between mt-5">
-          <span className="text-red-700 cursor-pointer">Delete account</span>
+          <span onClick={handleDelete} className="text-red-700 cursor-pointer">Delete account</span>
           <span className="text-red-700 cursor-pointer">Sign Out</span>
         </div>
         <p className="text-red-700">{error && "Something went wrong"}</p>
