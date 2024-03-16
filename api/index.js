@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import authRoute from './routes/auth.route.js';
 import userRoute from './routes/user.route.js';
+import path from 'path';
 
 dotenv.config();
 try {
@@ -14,6 +15,13 @@ try {
 }
 
 const app = express();
+
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, 'client', 'dist')));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+})
+
 // next line allows to receive json from api 
 app.use(express.json());
 app.use(cookieParser());
