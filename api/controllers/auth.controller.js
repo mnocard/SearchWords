@@ -57,6 +57,10 @@ export const google = async (req, res, next) => {
     }
 };
 
+export const signOut = async (req, res) => {
+    return res.clearCookie('access_token').status(200).json('Sign out success');
+};
+
 function GetToken(response, user) {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     const { password: hashedPassword, ...userDTO } = user._doc;
