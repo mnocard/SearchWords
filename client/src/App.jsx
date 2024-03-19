@@ -4,8 +4,8 @@ import About from './pages/About';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Profile from './pages/Profile';
-import Header from './components/Header2';
-import PrivateRoute from './components/PrivateRoute';
+import Header from './componentss/Header';
+import PrivateRoute from './componentss/PrivateRoute';
 
 const App = () => {
   return (
